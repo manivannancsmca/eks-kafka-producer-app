@@ -22,4 +22,9 @@ public class OrderProducerController {
         kafkaTemplate.send(TOPIC, order.orderId(), order);
         return "Order Event Published Successfully!";
     }
+
+    @GetMapping
+    public String helloMessage() {
+        return "this is your kafka producer app";
+    }
 }
