@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-producer-app
+  namespace: default
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: kafka-producer
+  template:
+    metadata:
+      labels:
+        app: kafka-producer
+    spec:
+      containers:
+      - name: producer
+        image: yourdockerusername/kafka-producer:latest
+
+        ports:
+        - containerPort: 8080
+
+        env:
+        - name: KAFKA_BOOTSTRAP_SERVERS
+          value: "kafka-headless.kube-system.svc.cluster.local:9092"
+
+        resources:
+          requests:
+            cpu: "250m"
+            memory: "512Mi"
+          limits:
+            cpu: "500m"
+            memory: "1Gi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-producer-service
+  namespace: default
+spec:
+  type: ClusterIP
+  selector:
+    app: kafka-producer
+  ports:
+  - port: 8080
+    targetPort: 8080
