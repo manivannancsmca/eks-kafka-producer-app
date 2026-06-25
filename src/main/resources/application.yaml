@@ -1,3 +1,10 @@
+server:
+  port: 8080
 spring:
   application:
     name: eks-kafka-producer-app
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:kafka-headless.kube-system.svc.cluster.local:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
