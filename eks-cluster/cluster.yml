@@ -1,0 +1,19 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: production-kafka-cluster
+  region: us-east-1
+  version: "1.30"
+
+managedNodeGroups:
+  - name: kafka-apps-nodes
+    instanceType: t3.medium
+    desiredCapacity: 3
+    minSize: 2
+    maxSize: 5
+    volumeSize: 30
+    availabilityZones: ["us-east-1a", "us-east-1b", "us-east-1c"]
+    iam:
+      withAddonPolicies:
+        ebs: true # Enables necessary IAM roles for EBS CSI Driver automatically

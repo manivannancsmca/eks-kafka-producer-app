@@ -1,0 +1,69 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-headless
+  namespace: kube-system
+spec:
+  ports:
+  - port: 9092
+    name: broker
+  clusterIP: None
+  selector:
+    app: kafka
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: kafka
+  namespace: kube-system
+spec:
+  serviceName: kafka-headless
+  replicas: 3
+  selector:
+    matchLabels:
+      app: kafka
+  template:
+    metadata:
+      labels:
+        app: kafka
+    spec:
+      containers:
+      - name: kafka
+        image: bitnami/kafka:3.7.0
+        ports:
+        - containerPort: 9092
+          name: broker
+        env:
+        - name: KAFKA_CFG_ZOOKEEPER_CONNECT
+          value: "zookeeper-service.kube-system.svc.cluster.local:2181"
+        - name: KAFKA_CFG_LISTENERS
+          value: "PLAINTEXT://:9092"
+        - name: KAFKA_CFG_ADVERTISED_LISTENERS
+          value: "PLAINTEXT://$(POD_NAME).kafka-headless.kube-system.svc.cluster.local:9092"
+        - name: ALLOW_PLAINTEXT_LISTENER
+          value: "yes"
+        - name: KAFKA_CFG_LOG_DIRS
+          value: "/bitnami/kafka/data"
+        envFrom:
+        - configMapRef:
+            name: kafka-env-config
+        volumeMounts:
+        - name: kafka-data-storage
+          mountPath: /bitnami/kafka/data
+  volumeClaimTemplates:
+  - metadata:
+      name: kafka-data-storage
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: kafka-ebs-gp3
+      resources:
+        requests:
+          storage: 20Gi
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kafka-env-config
+  namespace: kube-system
+data:
+  POD_NAME: kafka-0
