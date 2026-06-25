@@ -38,6 +38,15 @@ metadata:
   name: kafka-producer-service
   namespace: default
 spec:
+  type: LoadBalancer
+  selector:
+    app: kafka-producer
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+      protocol: TCP
+spec:
   type: ClusterIP
   selector:
     app: kafka-producer
