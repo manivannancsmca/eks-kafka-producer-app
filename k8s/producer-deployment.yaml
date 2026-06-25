@@ -43,13 +43,6 @@ spec:
     app: kafka-producer
   ports:
     - name: http
-      port: 80
-      targetPort: 8080
+      port: 80         # The port the Load Balancer exposes externally
+      targetPort: 8080 # The port your Spring Boot/Java app listens on inside the container
       protocol: TCP
-spec:
-  type: ClusterIP
-  selector:
-    app: kafka-producer
-  ports:
-  - port: 8080
-    targetPort: 8080
