@@ -30,7 +30,6 @@ jobs:
 
       - name: Build Spring Boot Application
         run: |
-          cd consumer-app
           mvn clean package -DskipTests
 
       - name: Log in to Docker Hub
