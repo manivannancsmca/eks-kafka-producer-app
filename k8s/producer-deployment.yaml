@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: producer
-        image: manivannancsmca/kafka-producer:4e2bc24cd6c1cdba6c55047d02fb6a67e1a4c69c
+        image: manivannancsmca/kafka-producer:c0a4d3ff0bc7d73cd335047fd48f1808a88aa66c
 
         ports:
         - containerPort: 8080
